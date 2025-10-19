@@ -5,13 +5,11 @@ export type MeasureMode = "3d" | "surface" | "surface+height";
 
 export interface MeasureToolOptions {
     mode?: MeasureMode;
+    snapEnabled?: boolean;  // 是否开启吸附
+    clickableTileset?: boolean;    // 可点击 3D Tiles
     clampToGround?: boolean;
-    snapEnabled?: boolean;         // 是否开启吸附
     snapRadiusPx?: number;         // 吸附半径（像素）
-    snapTilesetsOnly?: boolean;    // 仅对 3D Tiles/点云吸附（避免吸到地表）
-    snapPreview?: boolean;         // 显示吸附预览小黄点（已改为黑色）
     snapIndicatorSizePx?: number;  // （可选）吸附小黄点像素大小，默认 4，限制 2~12
-    snapStrict?: boolean;
 }
 
 type ResultPack = {
@@ -55,9 +53,8 @@ export default class MeasureTool {
     // ====== 吸附配置 ======
     private _snapEnabled: boolean;
     private _snapRadiusPx: number;
-    private _snapTilesetsOnly: boolean;
+    private _clickableTileset: boolean;
     private _snapIndicatorSizePx: number;
-    private _snapStrict: boolean;
 
     // ====== 吸附预览小点（黑色） ======
     private _snapIndicator: Cesium.Entity | undefined = undefined;
@@ -70,9 +67,8 @@ export default class MeasureTool {
 
         this._snapEnabled = options.snapEnabled ?? true;
         this._snapRadiusPx = options.snapRadiusPx ?? 16;
-        this._snapTilesetsOnly = options.snapTilesetsOnly ?? true;
+        this._clickableTileset = options.clickableTileset ?? true;
         this._snapIndicatorSizePx = Math.max(2, Math.min(12, options.snapIndicatorSizePx ?? 4));
-        this._snapStrict = options.snapStrict ?? true;
 
         this._handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
 
@@ -134,7 +130,7 @@ export default class MeasureTool {
             const snap = this._pickWithSnap(movement.position);
             const pos = snap?.cart;
             if (!pos) {
-                if (this._snapEnabled && this._snapStrict) this._toast("未拾取到点");
+                if (this._snapEnabled && this._clickableTileset) this._toast("未拾取到点");
                 return;
             }
             if (!this._startPos) {
@@ -371,7 +367,7 @@ export default class MeasureTool {
     private _pickFiltered(windowPosition: Cesium.Cartesian2): Cesium.Cartesian3 | undefined {
         const scene = this.viewer.scene;
         const picked = scene.pick(windowPosition);
-        if (this._snapTilesetsOnly) {
+        if (this._clickableTileset) {
             if (!this._isTilesetPick(picked)) return undefined;
         } else {
             if (!picked) return undefined;
@@ -567,7 +563,7 @@ export default class MeasureTool {
         row2.style.cssText = `display:flex; align-items:center; gap:12px; flex-wrap: wrap;`;
 
         const snapWrap = document.createElement("label");
-        snapWrap.style.cssText = `display:flex; align-items:center; gap:6px;`;
+        snapWrap.style.cssText = `display:flex; align-items:center; tilesetChkgap:6px;`;
         const snapChk = document.createElement("input");
         snapChk.type = "checkbox";
         snapChk.checked = this._snapEnabled;
@@ -582,15 +578,15 @@ export default class MeasureTool {
 
         const tilesetWrap = document.createElement("label");
         tilesetWrap.style.cssText = `display:flex; align-items:center; gap:6px;`;
-        const tilesetOnlyChk = document.createElement("input");
-        tilesetOnlyChk.type = "checkbox";
-        tilesetOnlyChk.checked = this._snapTilesetsOnly;
+        const tilesetChk = document.createElement("input");
+        tilesetChk.type = "checkbox";
+        tilesetChk.checked = this._clickableTileset;
         const tilesetOnlyLbl = document.createElement("span");
         tilesetOnlyLbl.textContent = "Clickable 3D Tiles/CloudPoint";
-        tilesetWrap.appendChild(tilesetOnlyChk);
+        tilesetWrap.appendChild(tilesetChk);
         tilesetWrap.appendChild(tilesetOnlyLbl);
-        tilesetOnlyChk.addEventListener("change", () => {
-            this._snapTilesetsOnly = tilesetOnlyChk.checked;
+        tilesetChk.addEventListener("change", () => {
+            this._clickableTileset = tilesetChk.checked;
         });
 
         row2.appendChild(snapWrap);
