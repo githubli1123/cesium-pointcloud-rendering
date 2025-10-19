@@ -1,0 +1,13 @@
+{
+  "shift_global": {
+    "x": 407000.0,
+    "y": 427000.0,
+    "z": 0.0
+  },
+  "shift_mode": "auto",
+  "manual_shift": null,
+  "auto_base": 1000.0,
+  "input_ply": "C:\\Users\\hehua\\Desktop\\point_process\\input.ply",
+  "output_ply": "C:\\Users\\hehua\\Desktop\\point_process\\output.ply",
+  "note": "Restoration formula: global = local + shift_global"
+}
