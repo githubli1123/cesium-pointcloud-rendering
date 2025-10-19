@@ -6,13 +6,12 @@ The project is based on Cesium, and data conversion and tiling are fully automat
 ## ⏱️ Development Time Breakdown
 
 | Phase                                               | Time    |
-| -------------------------------------------------- | ------- |
-| MVP basic version (data preprocessing, local run)  | 10h     |
-| Cloud deployment, bug fixes, feature polish, README| 10h     |
-| Code review (about 35% simple code AI-assisted)    | 2h      |
-| **Total**                                          | **22h** |
+| --------------------------------------------------- | ------- |
+| MVP basic version (data preprocessing, local run)   | 10h     |
+| Cloud deployment, bug fixes, feature polish, README | 13h     |
+| **Total**                                           | **23h** |
 
-AI-generated code includes: related DOM structure code, TypeScript type completions and corrections, and naming fixes, etc.
+The AI-generated code and the accompanying code review cover relevant DOM structure code, TypeScript type completions and corrections, naming fixes, and further optimization of related functionality to improve clarity and maintainability , etc.
 
 
 
